@@ -311,7 +311,7 @@
             <div class="divider">atau</div>
 
             <a href="{{ route('oauth.google.redirect') }}" class="btn btn-google w-100 py-2 mb-4">
-                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo">
+                <img src="{{ asset('images/google-logo.svg') }}" alt="Google Logo">
                 Daftar dengan Google
             </a>
         </form>
