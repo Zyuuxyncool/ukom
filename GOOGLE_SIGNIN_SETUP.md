@@ -318,6 +318,12 @@ When deploying to production:
    - Check Google Cloud Console for API usage
    - Set up billing alerts if needed
 
+6. **Google Logo CDN**:
+   - The implementation uses Google's logo from svgrepo.com CDN
+   - This is acceptable per Google's branding guidelines
+   - For production, consider hosting the logo locally or using Google's official CDN
+   - Alternative: Download and serve from your own `/public` directory
+
 ---
 
 ## Additional Resources
