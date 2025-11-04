@@ -72,6 +72,47 @@
             box-shadow: 0 6px 15px rgba(0, 121, 107, 0.3);
         }
 
+        .btn-google {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-weight: 600;
+            color: #444;
+            transition: all 0.3s ease;
+        }
+
+        .btn-google:hover {
+            background: #f9fafb;
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-google img {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 25px 0;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            border-top: 1px solid #e5e7eb;
+            margin: 0 10px;
+        }
+
         .login-links a {
             text-decoration: none;
             color: #9E6B3E;
@@ -266,6 +307,13 @@
             <div class="login-links text-center">
                 <a href="{{ route('login') }}" class="fw-semibold">Sudah Punya Akun? Masuk Disini</a>
             </div>
+
+            <div class="divider">atau</div>
+
+            <a href="{{ route('oauth.google.redirect') }}" class="btn btn-google w-100 py-2 mb-4">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo">
+                Daftar dengan Google
+            </a>
         </form>
     </div>
 
