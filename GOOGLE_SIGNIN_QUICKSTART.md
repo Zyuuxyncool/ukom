@@ -122,7 +122,9 @@ Redirect: https://yourdomain.com/auth/google/callback
 
 ## 📚 Full Documentation
 
-For detailed instructions, see [GOOGLE_SIGNIN_SETUP.md](./GOOGLE_SIGNIN_SETUP.md)
+- **Detailed Setup Guide**: [GOOGLE_SIGNIN_SETUP.md](./GOOGLE_SIGNIN_SETUP.md)
+- **Architecture & Flow**: [GOOGLE_SIGNIN_FLOW.md](./GOOGLE_SIGNIN_FLOW.md)
+- **Troubleshooting**: [GOOGLE_SIGNIN_TROUBLESHOOTING.md](./GOOGLE_SIGNIN_TROUBLESHOOTING.md)
 
 ---
 

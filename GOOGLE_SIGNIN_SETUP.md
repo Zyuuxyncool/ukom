@@ -322,6 +322,12 @@ When deploying to production:
 
 ## Additional Resources
 
+### Project Documentation
+- [Quick Start Guide](./GOOGLE_SIGNIN_QUICKSTART.md) - 5-minute setup
+- [Flow Architecture](./GOOGLE_SIGNIN_FLOW.md) - How it works under the hood
+- [Troubleshooting Guide](./GOOGLE_SIGNIN_TROUBLESHOOTING.md) - Common issues and solutions
+
+### External Documentation
 - [Laravel Socialite Documentation](https://laravel.com/docs/11.x/socialite)
 - [Google OAuth 2.0 Documentation](https://developers.google.com/identity/protocols/oauth2)
 - [Google Cloud Console](https://console.cloud.google.com/)
