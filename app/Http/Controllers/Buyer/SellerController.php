@@ -159,12 +159,13 @@ class SellerController extends Controller
             'stock'       => 'required|integer|min:1',
             'sub_category_id' => 'nullable|integer|exists:sub_categories,id',
             'brand_id'        => 'nullable|integer|exists:brands,id',
-            'images.*'        => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            // Allow common modern formats (no size limit here) without relying on GD's image() rule
+            'images.*'        => 'nullable|file|mimetypes:image/jpeg,image/png,image/webp|mimes:jpeg,png,jpg,webp',
         ], [
             'name.required'  => 'Nama produk wajib diisi.',
             'price.required' => 'Harga produk wajib diisi.',
             'stock.required' => 'Stok produk wajib diisi.',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'images.*' => 'Format foto harus jpg, jpeg, png, atau webp.',
         ]);
 
         $price = str_replace(['.', ','], ['', '.'], $request->price);
@@ -190,7 +191,7 @@ class SellerController extends Controller
 
         // ✅ Setelah upload produk pertama, ubah flag ke aktif (1)
         // if ($profil->flag < 1) {
-            $this->profilSellerService->update($profil->id, ['flag' => 1]);
+        $this->profilSellerService->update($profil->id, ['flag' => 1]);
         // }
 
         return redirect()->route('seller.dashboard.index')

@@ -62,7 +62,8 @@
                     <div class="col-md-6">
                         <label for="stock" class="form-label fw-bold">Stok</label>
                         {{-- Nilai profil->stock dihapus karena form ini untuk membuat produk baru --}}
-                        <x-input name="stock" caption="stock" :value="old('stock')" required class="autonumeric" />
+                        <x-input name="stock" caption="stock" :value="old('stock')" required class="autonumeric"
+                            data-unformat="true" />
                     </div>
                 </div>
 
@@ -89,8 +90,9 @@
                     <label for="images" class="form-label fw-bold">Foto Produk</label>
                     {{-- Input file diubah, name harus tetap 'images[]' --}}
                     <input type="file" name="file_input_temp" id="images" class="form-control form-control-lg"
-                        accept="image/*" multiple>
-                    <small class="text-muted">Bisa upload lebih dari satu foto. Maksimal 5 foto disarankan.</small>
+                        accept="image/jpeg,image/png,image/webp" multiple>
+                    <small class="text-muted">Format yang didukung: JPG, JPEG, PNG, WEBP. Maksimal 5 foto
+                        disarankan.</small>
                     <small id="file-error-message" class="text-danger d-block"></small>
                 </div>
 
@@ -147,7 +149,7 @@
                     const deleteBtn = document.createElement('button');
                     deleteBtn.type = 'button';
                     deleteBtn.innerHTML =
-                    '<i class="fas fa-times" style="position: relative; top: 0.5px;"></i>';
+                        '<i class="fas fa-times" style="position: relative; top: 0.5px;"></i>';
 
 
                     // ✅ Desain sederhana tapi modern
@@ -203,20 +205,37 @@
 
         // 2. Event Listener untuk Akumulasi File
         fileInput.addEventListener('change', function(e) {
-            const newFiles = Array.from(e.target.files);
+            const selected = Array.from(e.target.files);
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
 
-            // Validasi jumlah file
-            if (uploadedFiles.length + newFiles.length > 5) {
+            // Filter berdasarkan tipe saja (tanpa batas ukuran)
+            const validFiles = [];
+            const rejected = [];
+            for (const f of selected) {
+                if (!allowedTypes.includes(f.type)) {
+                    rejected.push(`${f.name}: format tidak didukung`);
+                    continue;
+                }
+                validFiles.push(f);
+            }
+
+            // Validasi jumlah file total (setelah validasi tipe)
+            if (uploadedFiles.length + validFiles.length > 5) {
                 fileErrorMessage.textContent = 'Maksimal 5 foto disarankan.';
-                e.target.value = ''; // Reset input agar bisa di-trigger lagi
+                e.target.value = '';
                 return;
+            }
+
+            // Tampilkan pesan jika ada yang ditolak
+            if (rejected.length) {
+                fileErrorMessage.textContent = rejected.join(' | ');
             } else {
                 fileErrorMessage.textContent = '';
             }
 
-            // Gabungkan file baru ke array global
-            uploadedFiles = uploadedFiles.concat(newFiles);
-            e.target.value = ''; // Kosongkan input file agar event 'change' dapat terpicu lagi
+            // Gabungkan file valid ke array global
+            uploadedFiles = uploadedFiles.concat(validFiles);
+            e.target.value = '';
 
             // Render ulang
             renderPreviews();
@@ -229,7 +248,13 @@
             // Handle Autonumeric dan format angka
             document.querySelectorAll('.autonumeric').forEach(el => {
                 if (el.dataset.unformat === "true") {
-                    el.value = el.value.replace(/\./g, '').replace(/,/g, '.');
+                    if (el.name === 'stock') {
+                        // Hanya angka untuk stok
+                        el.value = el.value.replace(/[^0-9]/g, '');
+                    } else {
+                        // Harga: hilangkan pemisah ribuan dan gunakan titik sebagai desimal
+                        el.value = el.value.replace(/\./g, '').replace(/,/g, '.');
+                    }
                 }
             });
 
@@ -255,7 +280,9 @@
                     headers: {
                         // Laravel akan otomatis menentukan Content-Type multipart/form-data
                         // saat Body adalah instance FormData, jadi tidak perlu disetel manual.
-                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                        'Accept': 'application/json', // Minta respons JSON untuk error validasi
+                        'X-Requested-With': 'XMLHttpRequest' // Tandai sebagai permintaan AJAX
                     },
                     body: formData
                 })
@@ -280,9 +307,26 @@
                     throw new Error('Respons server tidak terduga.');
                 })
                 .catch(error => {
-                    // Tampilkan error (jika validasi gagal)
+                    // Tampilkan error validasi dengan ramah
                     console.error('Error submitting form:', error);
-                    alert('Gagal menyimpan produk: Cek console untuk detail error atau ulangi proses.');
+                    let message = '';
+                    if (typeof error === 'object' && error !== null) {
+                        const msgs = [];
+                        for (const key in error) {
+                            const v = error[key];
+                            if (Array.isArray(v)) msgs.push(...v);
+                            else if (typeof v === 'string') msgs.push(v);
+                        }
+                        message = msgs.join(' ');
+                    } else if (typeof error === 'string') {
+                        message = error;
+                    }
+                    if (!message) message = 'Gagal menyimpan produk. Periksa kembali input Anda.';
+                    fileErrorMessage.textContent = message;
+                    fileErrorMessage.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
                 })
                 .finally(() => {
                     // Sembunyikan loading
